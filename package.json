@@ -1,0 +1,22 @@
+{
+  "name": "Calendar",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "supervisor ./bin/www"
+  },
+  "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "~1.0.0",
+    "cookie-parser": "~1.0.1",
+    "debug": "~0.7.4",
+    "express": "~4.2.0",
+    "express-session": "^1.5.1",
+    "jade": "~1.3.0",
+    "mongoose": "^3.8.12",
+    "morgan": "~1.0.0",
+    "passport": "^0.2.0",
+    "static-favicon": "~1.0.0",
+    "stylus": "0.42.3"
+  }
+}

@@ -1,0 +1,24 @@
+#!/usr/bin/env node
+var debug = require('debug')('Calendar');
+var app = require('../app');
+var spawn = require('child_process').spawn;
+var mongo = spawn('mongod');
+
+
+mongo.stdout.on('data', function (data) {
+    console.log(data.toString());
+});
+
+mongo.stderr.on('data', function (data) {
+    console.log('stderr: ' + data);
+});
+
+mongo.on('close', function (code) {
+    console.log('child process exited with code ' + code);
+});
+
+app.set('port', process.env.PORT || 3000);
+
+var server = app.listen(app.get('port'), function() {
+  debug('Express server listening on port ' + server.address().port);
+});

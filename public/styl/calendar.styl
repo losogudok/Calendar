@@ -1,0 +1,234 @@
+@import '../bower_components/bootstrap-stylus/stylus/bootstrap'
+
+// Calendar Header
+
+.calendar-header
+  padding 30px 0
+  background-color #eee
+  border-bottom 1px solid #ccc
+
+.calendar-header__add-btn
+  @extend .btn
+  @extend .btn-primary
+  @extend .pull-left
+  margin-right 20px
+
+.calendar-header__login-btn
+  @extend .calendar-header__add-btn
+
+.calendar-header__register-btn
+  @extend .btn
+  @extend .btn-primary
+  @extend .pull-left
+
+.calendar-header__search
+  @extend .pull-right
+
+.calendar-header__search-icon
+  width 40px
+  height 32px
+  display inline-block
+  vertical-align bottom
+  margin-bottom 0
+  cursor pointer
+
+.search-icon-svg
+  width 30px
+  height 30px
+  fill rgb(177, 177, 177)
+  transition fill 0.5s ease
+  &:hover
+    fill black
+
+.calendar-header__search-field
+  @extend .form-control
+  width auto
+  display inline-block
+
+
+.calendar-header__online-icon
+  @extend .pull-right
+  height  32px
+  width 32px
+  margin-left 15px
+  vertical-align bottom
+  border-radius 50%
+  background-color #999
+  transition background-color 0.5s ease
+
+.calendar-header__online-icon.online
+  background-color green
+
+.calendar-header__online-icon.offline
+  background-color darkred
+
+// Calendar Main Section
+
+.calendar-main-section
+  padding-top 20px
+
+// Calendar Navigation
+
+.calendar-nav-btn
+  display inline-block
+  width 48px
+  height 48px
+  cursor pointer
+  stroke #999
+  fill #999
+  stroke-width 0px
+  transition stroke-width 0.2s ease
+  &:hover
+    stroke-width 25px
+
+.calendar-month-navigation
+  margin 0 auto
+  @media $media-min-desktop
+    width 700px
+  @media $media-min-lg-desktop
+    width 875px
+
+
+.calendar-month-navigation__prev-month-btn
+  @extend .calendar-nav-btn
+
+.calendar-month-navigation__next-month-btn
+  @extend .calendar-nav-btn
+
+.calendar-month-navigation__month-text
+  display inline-block
+  vertical-align: 100%;
+  width 150px
+  text-align center
+
+.calendar-month-navigation__current-month-btn
+  @extend .calendar-month-navigation__month-text
+  text-align left
+
+.calendar-body
+  @extend .calendar-month-navigation
+
+.calendar-widget
+  display inline-block
+
+.calendar-row
+  border-top 1px solid #999
+  &:last-child
+    border-bottom 1px solid #999
+
+.calendar-cell
+  border-left 1px solid #999
+  padding 10px
+  display inline-block
+  color #666
+  cursor pointer
+  vertical-align top
+  &:last-child
+    border-right 1px solid #999
+  &:hover
+    background-color rgba(19, 129, 184, 0.72);
+    color white
+  @media $media-min-desktop
+    height 100px
+    width 100px
+  @media $media-min-lg-desktop
+      height 125px
+      width 125px
+
+.calendar-cell.other-month
+  background-color rgba(238, 238, 238, 0.39);
+  &:hover
+    background-color rgba(238, 238, 238, 0.39);
+    color #666
+
+.calendar-cell.current-day
+  background-color rgba(19, 129, 184, 0.2);
+  &:hover
+    background-color rgba(19, 129, 184, 0.72);
+    color white
+
+// Popup
+
+.popup-bg
+  width: 100%
+  height: 100%
+  background-color: rgba(0,0,0,0.5)
+  position: fixed
+  z-index: 1000
+  top: 0
+  display none
+
+.popup
+  position: absolute;
+  background-color: white;
+  z-index: 1;
+  box-sizing: border-box;
+  padding: 30px 24px 25px 23px;
+  box-shadow: 0px 0px 7px -3px black;
+  left 50%
+  top 50%
+  border-radius: 3px;
+  border: 1px solid #cccccc;
+  display none
+
+.popup__close
+  cursor pointer
+  width 30px
+  height 30px
+  position absolute
+  top 10px
+  right 10px
+
+.login-form
+  @extend .popup
+  width 300px
+  margin-left -150px
+  margin-top -120px
+
+.reg-form
+  @extend .login-form
+
+.event-form
+  @extend .popup
+  width 300px
+  margin-left -150px
+  margin-top -220px
+
+.event__save
+  @extend .btn
+  @extend .btn-primary
+  margin-right 20px
+
+.event__delete
+  @extend .btn
+  @extend .btn-default
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

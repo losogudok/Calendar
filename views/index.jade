@@ -1,0 +1,61 @@
+extends layout
+block content
+	.calendar-wrapper
+		header.calendar-header
+			.container
+				.calendar-header__add-btn#addEvent Добавить
+				.calendar-header__login-btn#login Войти
+				.calendar-header__register-btn#reg Регистрация
+				.calendar-header__online-icon#onlineIcon
+				.calendar-header__search
+					label.calendar-header__search-icon(for='search')
+						svg.search-icon-svg(xmlns="http://www.w3.org/2000/svg" width="48px" height="48px" enable-background="new 0 0 16 16" preserveAspectRatio="xMinYMin meet" viewBox="0 0 48 48")
+							path(d="M46.599 40.236l-10.545-10.545c1.836-2.973 2.946-6.441 2.946-10.191 0-10.77-8.73-19.5-19.5-19.5s-19.5 8.73-19.5 19.5 8.73 19.5 19.5 19.5c3.75 0 7.218-1.11 10.188-2.943l10.548 10.545c1.758 1.758 4.605 1.758 6.363 0s1.758-4.608 0-6.366zm-27.099-7.236c-7.455 0-13.5-6.045-13.5-13.5s6.045-13.5 13.5-13.5 13.5 6.045 13.5 13.5-6.045 13.5-13.5 13.5z")
+					input#search.calendar-header__search-field(type='text', placeholder='Поиск' name='search')
+		section.calendar-main-section
+			.calendar-month-navigation#calendarNav
+				svg.calendar-month-navigation__prev-month-btn.js-calendar-nav.js-nav-prev(data-date='' xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="512px" height="512px" viewBox="0 0 512 512" preserveAspectRatio="xMinYMin meet")
+					path(d="M223,223l116-116c10-10,10-24,0-34s-25-10-35,0L171,206c-5,5-7,10-7,17s2,12,7,17l133,133c5,5,11,7,17,7s13-2,18-7 c10-10,10-24,0-34L223,223z")
+				.calendar-month-navigation__month-text.js-calendar-nav.js-nav-text
+				svg.calendar-month-navigation__next-month-btn.js-calendar-nav.js-nav-next(data-date='' xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="512px" height="512px" viewBox="0 0 512 512" preserveAspectRatio="xMinYMin meet")
+					path(d="M339,206L206,73c-5-5-12-8-18-8s-12,3-17,8c-10,10-10,24,0,34l116,116L171,339c-10,10-10,24,0,34s25,10,35,0l133-133 c5-5,7-11,7-17C346,216,344,211,339,206z")
+				.calendar-month-navigation__current-month-btn.js-calendar-nav.js-nav-curr(data-date='') Сегодня
+			.calendar-body#calendarBody
+	.popup-bg
+		form.login-form#loginForm(role='form', action='/login')
+			.form-group
+				label(for='loginName') Имя пользователя
+				input#name.form-control
+			.form-group
+				label(for='loginPassword') Пароль
+				input#loginPassword.form-control(type='password')
+			button.btn.btn-primary(type='submit') Войти
+			svg.popup__close.js-close(xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100px" height="100px" preserveAspectRatio="xMinYMin meet" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve")
+				path(fill="#020202" d="M76.83,32.561L59.392,50L76.83,67.439c2.594,2.594,2.594,6.798,0,9.392 c-1.296,1.296-2.995,1.945-4.694,1.945c-1.7,0-3.399-0.648-4.695-1.945L50,59.391l-17.44,17.44 c-1.296,1.296-2.995,1.945-4.695,1.945c-1.699,0-3.397-0.648-4.694-1.945c-2.594-2.593-2.594-6.797,0-9.392L40.608,50L23.17,32.561 c-2.594-2.594-2.594-6.798,0-9.392c2.593-2.592,6.795-2.592,9.389,0L50,40.609l17.44-17.44c2.594-2.592,6.796-2.592,9.389,0 C79.424,25.763,79.424,29.967,76.83,32.561z")
+		form.reg-form#regForm(role='form', action='/signup')
+			.form-group
+				label(for='regName') Имя пользователя
+				input#regName.form-control
+			.form-group
+				label(for='regPassword') Пароль
+				input#regPassword.form-control(type='password')
+			button.btn.btn-primary(type='submit') Отправить
+			svg.popup__close.js-close(xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100px" height="100px" preserveAspectRatio="xMinYMin meet" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve")
+				path(fill="#020202" d="M76.83,32.561L59.392,50L76.83,67.439c2.594,2.594,2.594,6.798,0,9.392 c-1.296,1.296-2.995,1.945-4.694,1.945c-1.7,0-3.399-0.648-4.695-1.945L50,59.391l-17.44,17.44 c-1.296,1.296-2.995,1.945-4.695,1.945c-1.699,0-3.397-0.648-4.694-1.945c-2.594-2.593-2.594-6.797,0-9.392L40.608,50L23.17,32.561 c-2.594-2.594-2.594-6.798,0-9.392c2.593-2.592,6.795-2.592,9.389,0L50,40.609l17.44-17.44c2.594-2.592,6.796-2.592,9.389,0 C79.424,25.763,79.424,29.967,76.83,32.561z")
+		form.event-form#eventForm(role='form')
+			.form-group
+				label(for='eventName') Название
+				input#eventName.form-control(name='eventName')
+			.form-group
+				label(for='eventDate') Дата
+				input#eventDate.form-control(name='eventDate')
+			.form-group
+				label(for='eventParticipants') Участники
+				input#eventParticipants.form-control(name='eventParticipants')
+			.form-group
+				label(for='eventDescription') Описание
+				textarea.form-control(rows='4')(name='eventDescription')
+			button.event__save#eventSave(type='submit') Готово
+			button.event__delete#eventDelete(type='reset') Удалить
+			svg.popup__close.js-close(xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100px" height="100px" preserveAspectRatio="xMinYMin meet" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve")
+				path(fill="#020202" d="M76.83,32.561L59.392,50L76.83,67.439c2.594,2.594,2.594,6.798,0,9.392 c-1.296,1.296-2.995,1.945-4.694,1.945c-1.7,0-3.399-0.648-4.695-1.945L50,59.391l-17.44,17.44 c-1.296,1.296-2.995,1.945-4.695,1.945c-1.699,0-3.397-0.648-4.694-1.945c-2.594-2.593-2.594-6.797,0-9.392L40.608,50L23.17,32.561 c-2.594-2.594-2.594-6.798,0-9.392c2.593-2.592,6.795-2.592,9.389,0L50,40.609l17.44-17.44c2.594-2.592,6.796-2.592,9.389,0 C79.424,25.763,79.424,29.967,76.83,32.561z")
