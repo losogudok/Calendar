@@ -2,13 +2,13 @@ define(function(require){
 
     var PubSub = require('pubsub');
     var listeners = require('./listeners');
-    var cells = require('./views/cellsView');
+    var cellsView = require('./views/cellsView');
     var nav = require('./nav');
     var login = require('./login');
     var reg = require('./reg');
     var date = require('./date');
     var event = require('./event');
-    var db = require('./calendarDB');
+    var db = require('./storage/calendarDB');
     var offline = require('./../../../helpers/offline');
     var ui = require('./views/onlineView');
 

@@ -96,8 +96,6 @@ define(function (require) {
             next: {
                 time: getNextMonthTime()
             }
-        };
-        PubSub.publish('month.paint', dateObj);
     }
 
     function init() {

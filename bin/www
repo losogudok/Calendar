@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 var debug = require('debug')('Calendar');
-var app = require('../app');
 var spawn = require('child_process').spawn;
 var mongo = spawn('mongod');
+var app = require('../app');
+
+
 
 
 mongo.stdout.on('data', function (data) {

@@ -13,7 +13,8 @@ define(function(require){
 
     // Render functions
 
-    function showOnlineIcon() {
+    function showOnlineIcon(e) {c
+        console.log(e);
         rootEl.classList.remove('offline');
         onlineIcon.classList.add('online');
     }
