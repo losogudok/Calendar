@@ -8,7 +8,7 @@ define(function(require){
     var store;
     var request;
     var DB_NAME = 'Calendar';
-    var DB_VERSION = 1; // Use a long long for this value (don't use a float)
+    var DB_VERSION = 2; // Use a long long for this value (don't use a float)
     var DB_STORE_NAME = 'Events';
     var db;
 
@@ -20,6 +20,11 @@ define(function(require){
             // garbage collection.
             // db = req.result;
             db = this.result;
+            db.onerror = function(event) {
+                // Generic error handler for all errors targeted at this database's
+                // requests!
+                alert("Database error: " + event.target.errorCode);
+            };
             console.log("openDb DONE");
         };
         req.onerror = function (evt) {
@@ -29,10 +34,11 @@ define(function(require){
         req.onupgradeneeded = function (evt) {
             console.log("openDb.onupgradeneeded");
             var store = evt.currentTarget.result.createObjectStore(
-                DB_STORE_NAME, {autoIncrement: true });
+                DB_STORE_NAME, { keypath: 'id' });
 
+            store.createIndex('_id', '_id', { unique: true});
             store.createIndex('name', 'name', { unique: false });
-            store.createIndex('date', 'date', { unique: true });
+            store.createIndex('date', 'date', { unique: false });
             store.createIndex('participants', 'participants', { unique: false });
             store.createIndex('description', 'description', { unique: false });
         };
@@ -63,9 +69,6 @@ define(function(require){
         req.onsuccess = function (evt) {
             console.log("Insertion in DB successful");
         };
-        req.onerror = function() {
-            console.error("addPublication error", this.error);
-        };
     }
 
     function getItem(value) {
@@ -74,17 +77,22 @@ define(function(require){
         req.onsuccess = function(e) {
             console.log(e.target.result);
         };
-        req.onerror = function() {
-            console.error("getItem error", this.error);
+    }
+
+    function removeItem(msg, value) {
+        var store = getObjectStore(DB_STORE_NAME, 'readwrite');
+        req = store.delete(value);
+        req.onsuccess = function(e) {
+            console.log(e.target.result);
         };
     }
 
-    function removeItem() {
-
-    }
-
-    function updateItem() {
-
+    function updateItem(msg, value) {
+        var store = getObjectStore(DB_STORE_NAME, 'readwrite');
+        req = store.delete(value);
+        req.onsuccess = function(e) {
+            console.log(e.target.result);
+        };
     }
 
     function init() {
