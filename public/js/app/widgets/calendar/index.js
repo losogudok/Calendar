@@ -14,17 +14,17 @@ define(function(require){
 
 
     function init() {
-        date.init();
-        cellsView.init();
-        nav.init();
-        login.init();
-        reg.init();
-        event.init();
-        listeners.init();
+        // date.init();
+        // cellsView.init();
+        // nav.init();
+        // login.init();
+        // reg.init();
+        // event.init();
+        // listeners.init();
         db.init();
-        onlineView.init();
-        offline.init();
-        PubSub.publish('month.change');
+        // onlineView.init();
+        // offline.init();
+        // PubSub.publish('month.change');
         console.log('Calendar initialized');
     }
 
