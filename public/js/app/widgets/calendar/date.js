@@ -96,6 +96,7 @@ define(function (require) {
             next: {
                 time: getNextMonthTime()
             }
+        }
     }
 
     function init() {

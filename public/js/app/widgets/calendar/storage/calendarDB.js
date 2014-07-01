@@ -4,9 +4,7 @@
 define(function(require){
 
     var PubSub = require('pubsub');
-    var transaction;
     var store;
-    var request;
     var DB_NAME = 'Calendar';
     var DB_VERSION = 3; 
     var DB_STORE_NAME = 'Events';
@@ -38,8 +36,7 @@ define(function(require){
             var store;
 
             dbObj.deleteObjectStore(DB_STORE_NAME);
-            store = dbObj.createObjectStore(
-                DB_STORE_NAME, { keyPath: '_id' });
+            store = dbObj.createObjectStore(DB_STORE_NAME, { keyPath: '_id' });
 
             store.createIndex('name', 'name', { unique: false });
             store.createIndex('date', 'date', { unique: false });
@@ -102,8 +99,8 @@ define(function(require){
         var store = getObjectStore(DB_STORE_NAME, 'readwrite');
         var index = store.index('date');
         var events = [];
-        var boundKeyRange = IDBKeyRange.bound(dateStart, dateEnd);
-        index.openCursor(boundKeyRange).onsuccess = function(event) {
+        var boundDateRange = IDBKeyRange.bound(dateStart, dateEnd);
+        index.openCursor(boundDateRange).onsuccess = function(event) {
             var cursor = event.target.result;
             if (cursor) {
                 events.push(cursor.value);
@@ -116,9 +113,25 @@ define(function(require){
         };
     }
 
-    function search(field, value) {
+    function search(value) {
         var store = getObjectStore(DB_STORE_NAME, 'readwrite');
-        var index = store.index(field);
+        var dateIndex = store.index('date');
+        var startDate = Date.now();
+        var endDate = startDate + 3.15569e10;
+        var boundDateRange = IDBKeyRange.bound(startDate,endDate);
+        var events = [];
+
+        dateIndex.openCursor(boundDateRange).onsuccess(function(e){
+            var cursor = e.target.result;
+            if (cursor) {
+                console.log(cursor);
+                cursor.continue();
+            }
+            else {
+                console.log(events);
+                return events;
+            }
+        });
 
     }
 
@@ -160,7 +173,7 @@ define(function(require){
             date: new Date(2014, 7, 4).getTime(),
             participants: 'Я',
             description: 'Убраться в комнате как можно раньше!'
-        },d
+        },
         {
             _id: new Date().getTime() + 6,
             name: 'Посетить психолога',
@@ -188,10 +201,11 @@ define(function(require){
     }
 
     function init() {
-        PubSub.subscribe('event.add', addItem);
-        PubSub.subscribe('event.remove', removeItem);
-        PubSub.subscribe('event.get', getItem);
-        PubSub.subscribe('event.update', updateItem);
+        PubSub.subscribe('db.add', addItem);
+        PubSub.subscribe('db.remove', removeItem);
+        PubSub.subscribe('db.get', getItem);
+        PubSub.subscribe('db.update', updateItem);
+        PubSub.subscribe('db.search', search);
         openDb();
 
         // Add global for testing 
