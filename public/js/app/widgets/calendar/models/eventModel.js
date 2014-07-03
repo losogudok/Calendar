@@ -14,8 +14,8 @@ define(function(){
     };
 
     Event.prototype = {
-        create: function(event) {
-
+        create: function(msg, event) {
+            db.
         },
         read: function() {
 
@@ -25,10 +25,10 @@ define(function(){
         },
         remove: function() {
 
-        },
-        removeAll: function() {
-
         }
-    }
-
+    };
+    PubSub.subscribe('event.create', Event.create);
+    PubSub.subscribe('event.read', Event.read);
+    PubSub.subscribe('event.update', Event.update);
+    PubSub.subscribe('event.remove', Event.remove);
 });

@@ -121,17 +121,22 @@ define(function(require){
         var boundDateRange = IDBKeyRange.bound(startDate,endDate);
         var events = [];
 
-        dateIndex.openCursor(boundDateRange).onsuccess(function(e){
+        dateIndex.openCursor(boundDateRange).onsuccess = function(e){
             var cursor = e.target.result;
+            var evtObj;
+            var pattern = new RegExp(value, "i");
             if (cursor) {
-                console.log(cursor);
+                evtObj = cursor.value;
+                if (evtObj['name'].match(pattern) || evtObj['description'].match(pattern)) {
+                    events.push(evtObj);
+                }
                 cursor.continue();
             }
             else {
                 console.log(events);
                 return events;
             }
-        });
+        };
 
     }
 
