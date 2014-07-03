@@ -7,30 +7,21 @@ define(function(require){
 
     var PubSub = require('pubsub');
 
-    //    Element
-
-    var rootEl = document.querySelector('#onlineIcon');
-
-    // Render functions
-
-    function showOnlineIcon(e) {c
-        console.log(e);
-        rootEl.classList.remove('offline');
-        onlineIcon.classList.add('online');
-    }
-
-    function showOfflineIcon() {
-        onlineIcon.classList.add('offline');
-        onlineIcon.classList.remove('online');
-    }
-
-
-    function init() {
-        PubSub.subscribe('online', showOnlineIcon);
-        PubSub.subscribe('offline', showOfflineIcon);
-    }
-
-    return {
-        init: init
-    }
+    var onlineView = {
+        rootEl: document.querySelector('#onlineIcon'),
+        init:  function() {
+            PubSub.subscribe('online', this.showOnlineIcon);
+            PubSub.subscribe('offline', this.showOfflineIcon);
+        },
+        showOnlineIcon: function() {
+            this.rootEl.classList.remove('offline');
+            this.rootEl.classList.add('online');
+        },
+        showOfflineIcon: function() {
+            this.rootEl.classList.add('offline');
+            this.rootEl.classList.remove('online');
+        }
+    };
+    
+    return onlineView;
 });

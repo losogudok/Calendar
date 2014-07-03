@@ -1,16 +1,16 @@
 define(function(require){
 
-    var PubSub = require('pubsub');
-    var listeners = require('./listeners');
+    // Views
     var cellsView = require('./views/cellsView');
+    var onlineView = require('./views/onlineView');
+    
     var nav = require('./nav');
     var login = require('./login');
     var reg = require('./reg');
-    var date = require('./date');
     var event = require('./event');
     var db = require('./storage/calendarDB');
-    var offline = require('./../../../helpers/offline');
-    var ui = require('./views/onlineView');
+    var offline = require('helpers/offline');
+    
 
 
     function init() {
@@ -22,9 +22,7 @@ define(function(require){
         // event.init();
         // listeners.init();
         db.init();
-        // onlineView.init();
-        // offline.init();
-        // PubSub.publish('month.change');
+        onlineView.init();
         console.log('Calendar initialized');
     }
 

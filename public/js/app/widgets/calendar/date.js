@@ -74,7 +74,7 @@ define(function (require) {
         return nextMonth.getTime();
     }
 
-    function calcDate(msg, time) {
+    function calcDate(time) {
         var dateObj;
         date = time ? new Date(time) : new Date();
         currentYear = getCurrentYear();
@@ -98,13 +98,7 @@ define(function (require) {
             }
         }
     }
-
-    function init() {
-        PubSub.subscribe('date.calc', calcDate);
-        PubSub.subscribe('month.change', calcDate);
-    }
-
     return {
-        init: init
+        calcDate: calcDate
     };
 });

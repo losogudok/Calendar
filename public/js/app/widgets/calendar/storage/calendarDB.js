@@ -9,40 +9,45 @@ define(function(require){
     var DB_VERSION = 3; 
     var DB_STORE_NAME = 'Events';
     var db;
+    var database;
 
     function openDb() {
         console.log("Open database ...");
-        var req = indexedDB.open(DB_NAME, DB_VERSION);
-        req.onsuccess = function (evt) {
-            // Better use "this" than "req" to get the result to avoid problems with
-            // garbage collection.
-            // db = req.result;
-            db = this.result;
-            db.onerror = function(event) {
-            // Generic error handler for all errors targeted at this database's
-            // requests!
-                console.error("Database error: " + event.target.errorCode);
+        var openDBpromise = new Promise(function(resolve, reject){
+            var req = indexedDB.open(DB_NAME, DB_VERSION);
+            req.onsuccess = function (evt) {
+                // Better use "this" than "req" to get the result to avoid problems with
+                // garbage collection.
+                // db = req.result;
+                db = this.result;
+                db.onerror = function(event) {
+                // Generic error handler for all errors targeted at this database's
+                // requests!
+                    console.error("Database error: " + event.target.errorCode);
+                };
+                console.log("Database opened");
+                resolve(db);
             };
-            console.log("Database opened");
-            populateDB();
-        };
-        req.onerror = function (evt) {
-            console.error("Open DB error:", evt.target.errorCode);
-        };
+            req.onerror = function (evt) {
+                reject(evt.target.errorCode);
+            };
 
-        req.onupgradeneeded = function (evt) {
-            console.log("DB.onupgradeneeded");
-            var dbObj = evt.currentTarget.result;
-            var store;
+            req.onupgradeneeded = function (evt) {
+                console.log("DB.onupgradeneeded");
+                var dbObj = evt.currentTarget.result;
+                var store;
 
-            dbObj.deleteObjectStore(DB_STORE_NAME);
-            store = dbObj.createObjectStore(DB_STORE_NAME, { keyPath: '_id' });
+                dbObj.deleteObjectStore(DB_STORE_NAME);
+                store = dbObj.createObjectStore(DB_STORE_NAME, { keyPath: '_id' });
 
-            store.createIndex('name', 'name', { unique: false });
-            store.createIndex('date', 'date', { unique: false });
-            store.createIndex('participants', 'participants', { unique: false });
-            store.createIndex('description', 'description', { unique: false });
-        };
+                store.createIndex('name', 'name', { unique: false });
+                store.createIndex('date', 'date', { unique: false });
+                store.createIndex('participants', 'participants', { unique: false });
+                store.createIndex('description', 'description', { unique: false });
+                resolve(dbObj);
+            };
+        });
+        return openDBpromise;       
     }
 
     function getObjectStore(store_name, mode) {
@@ -51,89 +56,128 @@ define(function(require){
     }
 
     function clearObjectStore(store_name) {
-        var store = getObjectStore(DB_STORE_NAME, 'readwrite');
-        var req = store.clear();
-        req.onsuccess = function(evt) {
-            console.log('Object store cleared');
-        };
+        var clearPromise = new Promise(function(resolve, reject){
+            var store = getObjectStore(DB_STORE_NAME, 'readwrite');
+            var req = store.clear();
+            req.onsuccess = function(e) {
+                resolve(e.target)
+            };
+            req.onerror = function(e) {
+                reject(e);
+            };
+        });
     }
 
     // Basic CRUD
     // Value is a Primary Key
 
-    function addItem(value) {
-        var store = getObjectStore(DB_STORE_NAME, 'readwrite');
-        var req = store.add(value);
-        req.onsuccess = function (evt) {
-            console.log("Insertion in DB successful");
-        };
-    }
+    database = {
+        init: function() {
+            openDb().then(populateDB);
+        },
+        addItem: function(value) {
+            var addItemPromise = new Promise(function(resolve, reject){
+                var store = getObjectStore(DB_STORE_NAME, 'readwrite');
+                var req = store.add(value);
+                req.onsuccess = function (e) {
+                    console.log("Insertion in DB successful");
+                    resolve(e.target.result);
+                };
+            });
+            return addItemPromise;
+        },
+        getItem: function(value) {
+            var getItemPromise = new Promise(function(resolve, reject){
+                 var store = getObjectStore(DB_STORE_NAME, 'readonly');
+                var req = store.get(value);
+                req.onsuccess = function(e) {
+                    resolve(e.target.result);
+                };
+                req.onerror = function(e) {
+                    reject(e);
+                }
+            });  
+            return getItemPromise;          
+        },
+        removeItem: function(value) {
+            var removeItemPromise = new Promise(function(resolve, reject){
+                var store = getObjectStore(DB_STORE_NAME, 'readwrite');
+                var req = store.delete(value);
 
-    function getItem(value) {
-        var store = getObjectStore(DB_STORE_NAME, 'readonly');
-        var req = store.get(value);
-        req.onsuccess = function(e) {
-            console.log(e.target.result);
-            return e.target.result;
-        };
-    }
+                req.onsuccess = function(e) {
+                    resolve(e.target.result);
+                };
+                req.onerror = function(e) {
+                    reject(e);
+                };
+            }); 
+            return removeItemPromise;             
+        },
+        updateItem: function(value) {
+            var updateItemPromise = new Promise(function(resolve, reject){
+                var store = getObjectStore(DB_STORE_NAME, 'readwrite');
+                var req = store.put(value);
 
-    function removeItem(value) {
-        var store = getObjectStore(DB_STORE_NAME, 'readwrite');
-        var req = store.delete(value);
-        req.onsuccess = function(e) {
-            console.log(e.target.result);
-        };
-    }
-    function updateItem(value) {
-        var store = getObjectStore(DB_STORE_NAME, 'readwrite');
-        var req = store.put(value);
-        req.onsuccess = function(e) {
-            console.log(e.target.result);
-        };
-    }
+                req.onsuccess = function(e) {
+                    resolve(e.target.result);
+                };
+                req.onerror = function(e) {
+                    reject(e);
+                };
+            });
+            return updateItemPromise;
+        },
+        searchByDate: function(dateStart, dateEnd) {
 
-    // Get events in specific date range
+            var searchByDatePromise = new Promise(function(resolve, reject){
+                var store = getObjectStore(DB_STORE_NAME, 'readwrite');
+                var index = store.index('date');
+                var events = [];
+                var boundDateRange = IDBKeyRange.bound(dateStart, dateEnd);
 
-    function searchByDate(dateStart, dateEnd) {
-        var store = getObjectStore(DB_STORE_NAME, 'readwrite');
-        var index = store.index('date');
-        var events = [];
-        var boundDateRange = IDBKeyRange.bound(dateStart, dateEnd);
-        index.openCursor(boundDateRange).onsuccess = function(event) {
-            var cursor = event.target.result;
-            if (cursor) {
-                events.push(cursor.value);
-                cursor.continue();
-            }
-            else {
-                console.log(events);
-                return events;
-            }
-        };
-    }
+                index.openCursor(boundDateRange).onsuccess = function(event) {
+                    var cursor = event.target.result;
+                    if (cursor) {
+                        events.push(cursor.value);
+                        cursor.continue();
+                    }
+                    else {
+                        resolve(events);
+                    }
+                };
+            });
+            return searchByDatePromise;
+        },
+        search: function(value) {
+            var searchPromise = new Promise(function(resolve, reject){
+                var store = getObjectStore(DB_STORE_NAME, 'readwrite');
+                var dateIndex = store.index('date');
+                var startDate = Date.now();
+                var endDate = startDate + 3.15569e10;
+                var boundDateRange = IDBKeyRange.bound(startDate,endDate);
+                var events = [];
 
-    function search(value) {
-        var store = getObjectStore(DB_STORE_NAME, 'readwrite');
-        var dateIndex = store.index('date');
-        var startDate = Date.now();
-        var endDate = startDate + 3.15569e10;
-        var boundDateRange = IDBKeyRange.bound(startDate,endDate);
-        var events = [];
-
-        dateIndex.openCursor(boundDateRange).onsuccess(function(e){
-            var cursor = e.target.result;
-            if (cursor) {
-                console.log(cursor);
-                cursor.continue();
-            }
-            else {
-                console.log(events);
-                return events;
-            }
-        });
-
-    }
+                dateIndex
+                    .openCursor(boundDateRange)
+                    .onsuccess = function(e) {
+                        var cursor = e.target.result;
+                        var pattet = new RegExp(value)
+                        var evtObj;
+                        if (cursor) {
+                            evtObj = cursor.value;
+                            if (evtObj['name'].match() || evtObj['description'].match()) {
+                                events.push(evtObj);
+                            }
+                            cursor.continue();
+                        }
+                        else {
+                            resolve(events);
+                        }
+                };
+            });
+            return searchPromise;           
+        }
+    };
 
     // Create some sample events
 
@@ -196,31 +240,8 @@ define(function(require){
             description: 'Найти работу, которая будет мне нравится'
         }];
         events.forEach(function(value){
-            addItem(value);
+            database.addItem(value);
         });
     }
-
-    function init() {
-        PubSub.subscribe('db.add', addItem);
-        PubSub.subscribe('db.remove', removeItem);
-        PubSub.subscribe('db.get', getItem);
-        PubSub.subscribe('db.update', updateItem);
-        PubSub.subscribe('db.search', search);
-        openDb();
-
-        // Add global for testing 
-
-        window.db = {
-            getItem: getItem,
-            removeItem: removeItem,
-            updateItem: updateItem,
-            addItem: addItem,
-            searchByDate: searchByDate,
-            search: search
-        };
-}
-
-    return {
-        init: init
-    }
+    return database;
 });

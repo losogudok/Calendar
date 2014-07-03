@@ -9,26 +9,17 @@ define(function(){
     var ajax = require('ajax');
     var PubSub = require('pubsub');
 
-    var Event = function() {
-
-    };
-
-    Event.prototype = {
-        create: function(event) {
+    var eventModel = {
+        init: function() {
 
         },
-        read: function() {
+        create: function(evtObj) {
+            Promise.all([db.addItem(evtObj), ajax.postJSON(evtObj)]).then(function(){
+                PubSub.publish('event.added');
+            },
+            function(){
 
-        },
-        update: function() {
-
-        },
-        remove: function() {
-
-        },
-        removeAll: function() {
-
+            });
         }
     }
-
 });

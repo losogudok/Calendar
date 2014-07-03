@@ -7,101 +7,109 @@ define(function(require){
 
     var PubSub = require('pubsub');
     var date = require('./../date');
+    var attachEvent = require('helpers/basic').attachEvent;
+    var eventCollection = require('../models/eventCollection');
+
+    // DOM Elements
+
+    var rootEl = document.querySelector('#calendarBody');
     var calendarBody;
     var prevCalendar;
 
-    // Element
-
-    var rootEl = document.querySelector('#calendarBody');
-
-    // Render functions
-
-    function updateCells(date){
-        var el = document.createElement('div'),
-            prevCalendar = document.querySelector('.calendar-widget'),
-            row = el.cloneNode(),
-            cell = el.cloneNode(),
-            currentRow,
-            currentCell,
-            cellsInRow = 0,
-            i = 0,
-            j = 0,
-            k = 0,
-            cellDate;
 
 
-        el.classList.add('calendar-widget');
-        row.classList.add('calendar-row');
-        cell.classList.add('calendar-cell');
-        cell.setAttribute('data-date', '');
+    var cellsView = {
+        rootEl: rootEl,
+        init: function() {
+            var dateObj = date.calcDate();
 
-        currentRow = row.cloneNode();
-        currentCell = cell.cloneNode();
+            this.addListeners();
+            this.updateCells(dateObj);
+        },
+        addListeners: function() {
+            attachEvent(this.rootEl, 'click', 'js-current-month')
+        },
+        updateCells: function(date) {
+            var el = document.createElement('div'),
+                prevCalendar = document.querySelector('.calendar-widget'),
+                row = el.cloneNode(),
+                cell = el.cloneNode(),
+                currentRow,
+                currentCell,
+                cellsInRow = 0,
+                i = 0,
+                j = 0,
+                k = 0,
+                cellDate;
 
-//      Create cells for previous month
+            el.classList.add('calendar-widget');
+            row.classList.add('calendar-row');
+            cell.classList.add('calendar-cell');
+            cell.setAttribute('data-date', '');
 
-        for (; j < date.curr.firstWeekday; j++) {
-            currentCell.classList.add('other-month');
-            currentCell.textContent = date.prev.daysAmount - date.curr.firstWeekday + j + 1;
-            currentRow.appendChild(currentCell);
+            currentRow = row.cloneNode();
             currentCell = cell.cloneNode();
-            cellsInRow++;
-        }
 
-//      Create cells for current moth
+    //      Create cells for previous month
 
-        while(i < date.curr.daysAmount) {
-            if (cellsInRow === 7) {
-                cellsInRow = 0;
-                el.appendChild(currentRow);
-                currentRow = row.cloneNode();
-            }
-            currentCell = cell.cloneNode();
-            currentCell.classList.add('js-current-month');
-            currentCell.classList.add('current-month');
-            cellDate = new Date();
-            cellDate.setDate(i + 1);
-            currentCell.dataset.date = cellDate.toISOString().slice(0, 10).replace(/-/g, '').replace(/(\d{4})(\d{2})(\d{2})/,"$3" + "$2" + "$1");
-            currentCell.textContent = i + 1;
-            currentRow.appendChild(currentCell);
-
-            i++;
-            cellsInRow++;
-        }
-
-//      Create cells for next month
-
-        if (cellsInRow != 0) {
-            while (cellsInRow != 7) {
-                currentCell = cell.cloneNode();
+            for (; j < date.curr.firstWeekday; j++) {
                 currentCell.classList.add('other-month');
-                currentCell.innerText = k + 1;
+                currentCell.textContent = date.prev.daysAmount - date.curr.firstWeekday + j + 1;
                 currentRow.appendChild(currentCell);
-                k++;
+                currentCell = cell.cloneNode();
                 cellsInRow++;
             }
-            el.appendChild(currentRow);
+
+    //      Create cells for current moth
+
+            while(i < date.curr.daysAmount) {
+                if (cellsInRow === 7) {
+                    cellsInRow = 0;
+                    el.appendChild(currentRow);
+                    currentRow = row.cloneNode();
+                }
+                currentCell = cell.cloneNode();
+                currentCell.classList.add('js-current-month');
+                currentCell.classList.add('current-month');
+                cellDate = new Date();
+                cellDate.setDate(i + 1);
+                currentCell.dataset.date = cellDate.toISOString().slice(0, 10).replace(/-/g, '').replace(/(\d{4})(\d{2})(\d{2})/,"$3" + "$2" + "$1");
+                currentCell.textContent = i + 1;
+                currentRow.appendChild(currentCell);
+
+                i++;
+                cellsInRow++;
+            }
+
+    //      Create cells for next month
+
+            if (cellsInRow != 0) {
+                while (cellsInRow != 7) {
+                    currentCell = cell.cloneNode();
+                    currentCell.classList.add('other-month');
+                    currentCell.innerText = k + 1;
+                    currentRow.appendChild(currentCell);
+                    k++;
+                    cellsInRow++;
+                }
+                el.appendChild(currentRow);
+            }
+
+            if (prevCalendar) {
+                this.rootEl.removeChild(prevCalendar);
+            }
+            this.rootEl.appendChild(el);
+            return el;
+        },
+        highlightCurrDay: function() {
+            if (new Date().getMonth() === date.curr.month && new Date().getFullYear() === date.curr.year) {
+                var currDate = new Date().toISOString().slice(0, 10).replace(/-/g, '').replace(/(\d{4})(\d{2})(\d{2})/,"$3" + "$2" + "$1");
+                document.querySelector('[data-date="' + currDate + '"]').classList.add('current-day');
+            } 
+        },
+        showEvents: function(events) {
+
         }
-
-        if (prevCalendar) {
-            rootEl.removeChild(prevCalendar);
-        }
-        rootEl.appendChild(el);
-        return el;
-    }
-
-    function highlightCurrDay(date) {
-        if (new Date().getMonth() === date.curr.month && new Date().getFullYear() === date.curr.year) {
-            var currDate = new Date().toISOString().slice(0, 10).replace(/-/g, '').replace(/(\d{4})(\d{2})(\d{2})/,"$3" + "$2" + "$1");
-            document.querySelector('[data-date="' + currDate + '"]').classList.add('current-day');
-        }
-    }
-
-
-    function init() {
-        PubSub.subscribe('month.paint', changeMonth);
-    }
-    return {
-        init: init
-    }
+    };
+    return cellsView;
 });

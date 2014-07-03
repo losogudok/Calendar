@@ -2,7 +2,10 @@
  * Created by andrey on 14.06.14.
  */
 define(function(require){
-    var PubSub = require('pubsub');
+    
+        // Modules
+
+        var PubSub = require('pubsub');
 
         window.addEventListener("offline", function(e) {
             PubSub.publish('offline');
