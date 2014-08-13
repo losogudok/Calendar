@@ -1,12 +1,7 @@
 /**
  * Created by andrey on 02.05.14.
  */
-define(function (require) {
-
-    // Modules
-
-    var PubSub = require('pubsub');
-
+define(function () {
 
     var date,
         currentYear,
@@ -80,7 +75,7 @@ define(function (require) {
         currentYear = getCurrentYear();
         currentMonth = getCurrentMonth();
         daysInMonths = [31, getDaysInFebruary(), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-        dateObj = {
+        return dateObj = {
             curr: {
                 day: getCurrentMonthDay(),
                 weekday: getCurrentWeekDay(),
@@ -96,7 +91,7 @@ define(function (require) {
             next: {
                 time: getNextMonthTime()
             }
-        }
+        };
     }
     return {
         calcDate: calcDate

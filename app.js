@@ -35,7 +35,8 @@ app.use(passport.session()); // persistent login sessions
 
 // ROUTES
 // ==============================================
-app.use('/', routes(passport));
+app.use('/', routes.index);
+app.use('/user', routes.user(passport));
 
 
 

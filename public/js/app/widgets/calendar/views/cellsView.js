@@ -10,16 +10,14 @@ define(function(require){
     var attachEvent = require('helpers/basic').attachEvent;
     var eventCollection = require('../models/eventCollection');
 
-    // DOM Elements
 
-    var rootEl = document.querySelector('#calendarBody');
     var calendarBody;
     var prevCalendar;
 
 
 
     var cellsView = {
-        rootEl: rootEl,
+        rootEl: document.querySelector('#calendarBody'),
         init: function() {
             var dateObj = date.calcDate();
 
